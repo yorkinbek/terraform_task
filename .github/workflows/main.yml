@@ -1,25 +1,27 @@
-name: Build and Deploy
+name: Docker Build and Deploy
 
 on:
   push:
     branches:
-      - "*"
-      - "main"
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
-jobs: 
- 
-  - name: SSH into the server and deploy
+  
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: SSH into the server and deploy
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USERNAME }}
-        key: ${{ secrets.SERVER_PASSWORD }}
+        password: ${{ secrets.SERVER_PASSWORD }}
         script: |
-          git pull origin main
-          echo "${{ secrets.SERVER_USER_PASSWORD }}" | sudo cp /src/.env /home/ubuntu/server/
-          echo "${{ secrets.SERVER_USER_PASSWORD }}" | sudo supervisorctl reread
-          echo "${{ secrets.SERVER_USER_PASSWORD }}" | sudo supervisorctl update
-          echo "${{ secrets.SERVER_USER_PASSWORD }}" | sudo supervisorctl restart server
+          whoami
